@@ -3,6 +3,8 @@ import 'dart:ui';
 class ChartData {
   final String label;
   final double value;
+
+  /// This will override and set an individual bar color
   final Color? color;
 
   const ChartData({

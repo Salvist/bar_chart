@@ -12,6 +12,11 @@ class BarDecoration {
   /// Defaults to 2.0, cannot be less than 1.
   final double labelWidthScale;
 
+  /// Display of the value in case decimals go crazy.
+  ///
+  /// Convert the value using toStringAsFixed()
+  final String Function(double milestone)? displayValue;
+
   const BarDecoration({
     this.width = 40.0,
     this.color,
@@ -19,6 +24,7 @@ class BarDecoration {
     this.labelWidthScale = 2.0,
     this.labelStyle,
     this.valueStyle,
+    this.displayValue,
   }) : assert(labelWidthScale >= 1.0);
 
   double get labelWidth => width * labelWidthScale;

@@ -20,9 +20,16 @@ class Bar extends StatelessWidget {
   Widget build(BuildContext context) {
     Widget? valueText;
     if (value != null) {
+      String displayValue;
+      if (decoration.displayValue != null) {
+        displayValue = decoration.displayValue!(value!);
+      } else {
+        displayValue = value!.toStringAsFixed(0);
+      }
+
       valueText = DefaultTextStyle.merge(
         style: TextStyle(fontSize: 10, color: Theme.of(context).colorScheme.onPrimary),
-        child: Text('$value', style: decoration.valueStyle),
+        child: Text(displayValue, style: decoration.valueStyle),
       );
     }
 

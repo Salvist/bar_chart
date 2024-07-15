@@ -1,4 +1,5 @@
 import 'package:bar_chart/bar_chart.dart';
+import 'package:example/data/united_state_inflation_rate.dart';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -34,28 +35,54 @@ class BarChartExampleScreen extends StatelessWidget {
     return (dataHighestValue ~/ 100) * 100 + 100;
   }
 
+  static const _titleStyle = TextStyle(fontSize: 24, fontWeight: FontWeight.bold);
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Column(
-        children: [
-          BarChart(
-            milestoneDecoration: const MilestoneDecoration(
-              step: 5,
-              suffixText: '%',
-            ),
-            highestMilestone: progressiveMilestone,
-            dataSource: const <ChartData>[
-              ChartData(
-                label: 'Data 1',
-                value: 25.0,
+      body: SingleChildScrollView(
+        child: SizedBox(
+          width: MediaQuery.of(context).size.width,
+          child: Column(
+            children: [
+              BarChart(
+                milestoneDecoration: const MilestoneDecoration(
+                  step: 5,
+                  suffixText: '%',
+                ),
+                highestMilestone: progressiveMilestone,
+                dataSource: const <ChartData>[
+                  ChartData(
+                    label: 'Data 1',
+                    value: 25.0,
+                  ),
+                  ChartData(label: 'Data 2', value: 75.0),
+                  ChartData(label: 'Data 3', value: 50.0),
+                  ChartData(label: 'Data 4', value: 100.0),
+                ],
               ),
-              ChartData(label: 'Data 2', value: 75.0),
-              ChartData(label: 'Data 3', value: 50.0),
-              ChartData(label: 'Data 4', value: 100.0),
+              const Text('Bar Chart Example #1', style: _titleStyle),
+              const Text('U.S. Inflation Rate from 2014 - 2024'),
+              BarChart(
+                height: 240,
+                shrinkWrap: true,
+                highestMilestone: (dataHighestValue) => 8,
+                barDecoration: const BarDecoration(
+                  width: 28,
+                  labelWidthScale: 1.6,
+                ),
+                milestoneDecoration: const MilestoneDecoration(
+                  suffixText: '%',
+                ),
+                dataSource: ChartData.fromMap(inflationRateData),
+              ),
+              const SelectableText(
+                'Note: Data is taken from usinflationcalculator.com '
+                'and is used only for an example of this chart package.',
+              ),
             ],
           ),
-        ],
+        ),
       ),
     );
   }

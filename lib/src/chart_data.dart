@@ -19,4 +19,14 @@ class ChartData {
         value: value ?? this.value,
         color: color,
       );
+
+  static List<ChartData> fromMap(Map<String, double> data) {
+    final list = <ChartData>[];
+    for (final entry in data.entries) {
+      list.add(
+        ChartData(label: entry.key, value: entry.value),
+      );
+    }
+    return list;
+  }
 }

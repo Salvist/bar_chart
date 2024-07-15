@@ -4,4 +4,4 @@ export 'src/bar_chart.dart';
 export 'src/bar.dart';
 export 'src/chart_data.dart';
 export 'src/legend_icon.dart';
-export 'src/milestone_decorator.dart';
+export 'src/decorator.dart';

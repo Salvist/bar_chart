@@ -2,17 +2,13 @@ import 'dart:math';
 
 import 'package:bar_chart/src/bar.dart';
 import 'package:bar_chart/src/chart_data.dart';
+import 'package:bar_chart/src/decorator.dart';
 import 'package:bar_chart/src/milestone.dart';
-import 'package:bar_chart/src/milestone_decorator.dart';
 import 'package:flutter/material.dart';
 
 class BarChart extends StatelessWidget {
   final List<ChartData> dataSource;
-  final double width;
   final double height;
-  final double barWidth;
-  final double barLabelWidth;
-  final Color? barColor;
 
   /// Set a dynamic highest milestone
   ///
@@ -20,17 +16,19 @@ class BarChart extends StatelessWidget {
   final double Function(double dataHighestValue)? highestMilestone;
   final MilestoneDecoration milestoneDecoration;
 
+  final BarDecoration barDecoration;
+
+  final bool shrinkWrap;
+
   const BarChart({
     super.key,
     required this.dataSource,
-    this.width = 560.0,
     this.height = 320,
-    this.barWidth = 40.0,
-    this.barLabelWidth = 80.0,
-    this.barColor,
     this.highestMilestone,
     this.milestoneDecoration = const MilestoneDecoration(),
-  }) : assert(barLabelWidth > barWidth);
+    this.barDecoration = const BarDecoration(),
+    this.shrinkWrap = true,
+  });
 
   static const _milestoneVerticalPadding = 8.0;
   static const _barLabelHeight = 40.0;
@@ -44,43 +42,29 @@ class BarChart extends StatelessWidget {
     final dataMaxValue = dataSource.map((data) => data.value).reduce(max);
     final highestMilestone = this.highestMilestone?.call(dataMaxValue) ?? dataMaxValue;
 
-    final bars = Row(
-      mainAxisSize: MainAxisSize.min,
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      crossAxisAlignment: CrossAxisAlignment.end,
+    Widget chart = Column(
       children: [
-        ...dataSource.map(
-          (e) => Bar(
-            width: barWidth,
-            labelWidth: barLabelWidth,
-            height: getBarHeight(e.value, highestMilestone),
-            color: e.color ?? barColor ?? Theme.of(context).primaryColor,
+        Expanded(
+          child: Stack(
+            children: [
+              MilestoneLines(step: milestoneDecoration.step),
+              Positioned(
+                left: 0,
+                top: _milestoneVerticalPadding,
+                right: 0,
+                bottom: _milestoneVerticalPadding,
+                child: _buildBars(context, highestMilestone),
+              ),
+            ],
           ),
         ),
+        _buildLabels(),
       ],
     );
 
-    final barLabels = SizedBox(
-      height: _barLabelHeight,
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: dataSource
-            .map(
-              (e) => SizedBox(
-                width: barLabelWidth,
-                child: Text(
-                  e.label,
-                  textAlign: TextAlign.center,
-                ),
-              ),
-            )
-            .toList(),
-      ),
-    );
+    chart = shrinkWrap ? IntrinsicWidth(child: chart) : Expanded(child: chart);
 
     return SizedBox(
-      width: width,
       height: height,
       child: Row(
         mainAxisSize: MainAxisSize.min,
@@ -90,29 +74,46 @@ class BarChart extends StatelessWidget {
             highestMilestone: highestMilestone,
             decoration: milestoneDecoration,
           ),
-          Expanded(
-            child: Column(
-              children: [
-                Expanded(
-                  child: Stack(
-                    // fit: StackFit.expand,
-                    children: [
-                      MilestoneLines(step: milestoneDecoration.step),
-                      Positioned(
-                        left: 0,
-                        top: _milestoneVerticalPadding,
-                        right: 0,
-                        bottom: _milestoneVerticalPadding,
-                        child: bars,
-                      ),
-                    ],
-                  ),
-                ),
-                barLabels,
-              ],
-            ),
-          ),
+          chart,
         ],
+      ),
+    );
+  }
+
+  Widget _buildBars(BuildContext context, double highestMilestone) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      crossAxisAlignment: CrossAxisAlignment.end,
+      children: [
+        ...dataSource.map(
+          (e) => Bar(
+            decoration: barDecoration,
+            height: getBarHeight(e.value, highestMilestone),
+            color: e.color ?? barDecoration.color ?? Theme.of(context).primaryColor,
+            value: e.value,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildLabels() {
+    return SizedBox(
+      height: _barLabelHeight,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: List.generate(
+          dataSource.length,
+          (index) {
+            final data = dataSource[index];
+            return SizedBox(
+              width: barDecoration.labelWidth,
+              child: Text(data.label, textAlign: TextAlign.center),
+            );
+          },
+        ),
       ),
     );
   }

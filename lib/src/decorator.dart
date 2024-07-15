@@ -15,7 +15,7 @@ class BarDecoration {
   /// Display of the value in case decimals go crazy.
   ///
   /// Convert the value using toStringAsFixed()
-  final String Function(double milestone)? displayValue;
+  final String Function(double value)? displayValue;
 
   const BarDecoration({
     this.width = 40.0,

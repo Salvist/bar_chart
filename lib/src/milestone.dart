@@ -16,7 +16,7 @@ class MilestoneIndicators extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.end,
         children: List.generate(
           5,
-          (index) => Text('${100 - (index * 25)}'),
+          (index) => Text('${100 - (index * 25)}%'),
         ),
       ),
     );

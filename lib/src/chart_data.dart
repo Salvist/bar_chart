@@ -6,4 +6,12 @@ class ChartData {
     required this.label,
     required this.value,
   });
+
+  ChartData copyWith({
+    double? value,
+  }) =>
+      ChartData(
+        label: label,
+        value: value ?? this.value,
+      );
 }

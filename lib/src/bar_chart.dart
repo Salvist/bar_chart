@@ -1,6 +1,9 @@
+import 'dart:math';
+
 import 'package:bar_chart/src/bar.dart';
 import 'package:bar_chart/src/chart_data.dart';
 import 'package:bar_chart/src/milestone.dart';
+import 'package:bar_chart/src/milestone_decorator.dart';
 import 'package:flutter/material.dart';
 
 class BarChart extends StatelessWidget {
@@ -9,6 +12,13 @@ class BarChart extends StatelessWidget {
   final double height;
   final double barWidth;
   final double barLabelWidth;
+  final Color? barColor;
+
+  /// Set a dynamic highest milestone
+  ///
+  /// See an example of this package for more information.
+  final double Function(double dataHighestValue)? highestMilestone;
+  final MilestoneDecoration milestoneDecoration;
 
   const BarChart({
     super.key,
@@ -17,19 +27,23 @@ class BarChart extends StatelessWidget {
     this.height = 320,
     this.barWidth = 40.0,
     this.barLabelWidth = 80.0,
+    this.barColor,
+    this.highestMilestone,
+    this.milestoneDecoration = const MilestoneDecoration(),
   }) : assert(barLabelWidth > barWidth);
 
   static const _milestoneVerticalPadding = 8.0;
   static const _barLabelHeight = 40.0;
 
-  double get maxBarHeight => height - (_milestoneVerticalPadding * 2) - _barLabelHeight - 1;
+  double get maxBarHeight => height - (_milestoneVerticalPadding * 2) - _barLabelHeight;
 
-  double getBarHeight(double value) {
-    return maxBarHeight * value / 100;
-  }
+  double getBarHeight(double value, double highestMilestone) => maxBarHeight * value / highestMilestone;
 
   @override
   Widget build(BuildContext context) {
+    final dataMaxValue = dataSource.map((data) => data.value).reduce(max);
+    final highestMilestone = this.highestMilestone?.call(dataMaxValue) ?? dataMaxValue;
+
     final bars = Row(
       mainAxisSize: MainAxisSize.min,
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -39,8 +53,8 @@ class BarChart extends StatelessWidget {
           (e) => Bar(
             width: barWidth,
             labelWidth: barLabelWidth,
-            height: getBarHeight(e.value),
-            color: Colors.red,
+            height: getBarHeight(e.value, highestMilestone),
+            color: e.color ?? barColor ?? Theme.of(context).primaryColor,
           ),
         ),
       ],
@@ -71,8 +85,10 @@ class BarChart extends StatelessWidget {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          const MilestoneIndicators(
+          MilestoneIndicators(
             labelPadding: _barLabelHeight,
+            highestMilestone: highestMilestone,
+            decoration: milestoneDecoration,
           ),
           Expanded(
             child: Column(
@@ -81,7 +97,7 @@ class BarChart extends StatelessWidget {
                   child: Stack(
                     // fit: StackFit.expand,
                     children: [
-                      const MilestoneLines(),
+                      MilestoneLines(step: milestoneDecoration.step),
                       Positioned(
                         left: 0,
                         top: _milestoneVerticalPadding,

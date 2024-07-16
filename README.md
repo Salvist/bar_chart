@@ -19,8 +19,20 @@ TODO: List what your package can do. Maybe include images, gifs, or videos.
 
 ## Getting started
 
-TODO: List prerequisites and provide or point to information on how to
-start using the package.
+Simply add the `bar_chart` and git url to your dependencies in `pubspec.yaml` like so:
+
+```dart
+dependencies:
+  flutter:
+    sdk: flutter
+
+  bar_chart:
+    git: https://github.com/Salvist/bar_chart.git
+```
+
+Then run `flutter pub get`
+
+To always get the latest update, run `flutter pub upgrade bar_chart`
 
 ## Usage
 

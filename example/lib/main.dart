@@ -68,9 +68,11 @@ class BarChartExampleScreen extends StatelessWidget {
                 height: 240,
                 shrinkWrap: true,
                 highestMilestone: (dataHighestValue) => 8,
-                barDecoration: const BarDecoration(
+                barDecoration: BarDecoration(
                   width: 28,
                   labelWidthScale: 1.6,
+                  displayValue: (value) => '$value%',
+                  valueStyle: const TextStyle(fontSize: 9),
                 ),
                 milestoneDecoration: const MilestoneDecoration(
                   suffixText: '%',

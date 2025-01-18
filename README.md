@@ -15,7 +15,10 @@ A simple bar chart package that turns your data into a bar chart that is customi
 
 ## Features
 ![img.png](img.png)
-TODO: List what your package can do. Maybe include images, gifs, or videos.
+
+![img_1.png](img_1.png)
+
+See `/example` folder
 
 ## Getting started
 

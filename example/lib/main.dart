@@ -45,6 +45,7 @@ class BarChartExampleScreen extends StatelessWidget {
           width: MediaQuery.of(context).size.width,
           child: Column(
             children: [
+              const SizedBox(height: 32),
               BarChart(
                 milestoneDecoration: const MilestoneDecoration(
                   step: 5,
